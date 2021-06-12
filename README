@@ -1,0 +1,28 @@
+The template builds a VM image from /usr/src (override by setting
+FREEBSD_HOST_SRC_PATH).  The intent is to enable iterative kernel
+development by making it quick to compile and install a new kernel
+into the image.
+
+1. run.sh boots the image with bhyve.  Before this can be used,
+   the jail must be configured to allow VM creation:
+
+   # bastille config <jail name> set allow.vmm
+   # bastille restart <jail name>
+
+   The jail's devfs rules must permit access to vmm(4) devices.
+   To do this, add the following to the devfs ruleset for the jail:
+
+   add path 'vmm' unhide
+   add path 'vmm/*' unhide
+   add path 'vmm.io' unhide
+   add path 'vmm.io/*' unhide
+
+   The ruleset can be configured with:
+
+   # bastille config <jail name> set devfs_rule <ruleset number>
+   # bastille restart <jail name>
+
+2. build.sh builds a new kernel and installs it into a separate
+   disk, rather than rebuilding the whole image.  The VM boots
+   from this separate disk.  The VM can be running while this
+   script is running; after a reboot it'll boot the new kernel.

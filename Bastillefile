@@ -1,0 +1,40 @@
+ARG JFLAG=-j4
+ARG TOOLCHAIN=llvm11
+ARG FREEBSD_HOST_SRC_PATH=/usr/src
+
+PKG ${TOOLCHAIN} bhyve-firmware
+
+ARG _FREEBSD_SRC_PATH=/root/freebsd
+ARG _FREEBSD_SRCCONF=/root/src.conf
+ARG _FREEBSD_BUILDROOT=/root/build
+ARG _FREEBSD_KERN_BUILDROOT=/root/kernel
+ARG _FREEBSD_VM_IMG=/root/vm.raw
+ARG _FREEBSD_KERN_VM_IMG=/root/vm_kern.raw
+
+CMD mkdir -p ${_FREEBSD_SRC_PATH}
+MOUNT ${FREEBSD_HOST_SRC_PATH} ${_FREEBSD_SRC_PATH}
+
+CP src.conf ${_FREEBSD_SRCCONF}
+RENDER ${_FREEBSD_SRCCONF}
+CP run.sh /root/run.sh
+RENDER /root/run.sh
+CP build.sh /root/build.sh
+RENDER /root/build.sh
+
+CMD mkdir -p ${_FREEBSD_BUILDROOT}
+CMD make -C ${_FREEBSD_SRC_PATH} ${JFLAG} buildworld SRCCONF=${_FREEBSD_SRCCONF} CROSS_TOOLCHAIN=${TOOLCHAIN}
+CMD make -C ${_FREEBSD_SRC_PATH} ${JFLAG} buildkernel SRCCONF=${_FREEBSD_SRCCONF}
+CMD make -C ${_FREEBSD_SRC_PATH} ${JFLAG} installworld -DNO_FSCHG DESTDIR=${_FREEBSD_BUILDROOT} SRCCONF=${_FREEBSD_SRCCONF}
+CMD make -C ${_FREEBSD_SRC_PATH} ${JFLAG} installkernel -DNO_FSCHG DESTDIR=${_FREEBSD_KERN_BUILDROOT} SRCCONF=${_FREEBSD_SRCCONF}
+CMD make -C ${_FREEBSD_SRC_PATH} distribution -DNO_FSCHG DESTDIR=${_FREEBSD_BUILDROOT} SRCCONF=${_FREEBSD_SRCCONF}
+
+CP vm/ ${_FREEBSD_BUILDROOT}
+
+CMD mkdir -p ${_FREEBSD_BUILDROOT}/boot/efi/EFI/BOOT
+CMD cp ${_FREEBSD_BUILDROOT}/boot/loader.efi ${_FREEBSD_BUILDROOT}/boot/efi/EFI/BOOT/bootx64.efi
+CMD makefs -t msdos -o fat_type=16 -o sectors_per_cluster=1 -o volume_label=EFISYS -s 4096k /root/vm.efi ${_FREEBSD_BUILDROOT}/boot/efi
+
+CMD makefs -B little -M 10g -S 512 -Z -o label=VM -o softupdates=1 -o version=2 /root/vm.part ${_FREEBSD_BUILDROOT}
+CMD makefs -B little -S 512 -Z -o label=kernel -o version=2 /root/vm_kern.part ${_FREEBSD_KERN_BUILDROOT}
+CMD mkimg -s gpt -f raw -S 512 -b ${_FREEBSD_BUILDROOT}/boot/pmbr -p freebsd-boot/bootfs:=${_FREEBSD_BUILDROOT}/boot/gptboot -p efi:=/root/vm.efi -p freebsd-ufs/rootfs:=/root/vm.part -o ${_FREEBSD_VM_IMG}
+CMD mkimg -s gpt -f raw -S 512 -b ${_FREEBSD_BUILDROOT}/boot/pmbr -p freebsd-ufs/kernel:=/root/vm_kern.part -o ${_FREEBSD_KERN_VM_IMG} 
