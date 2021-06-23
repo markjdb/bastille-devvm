@@ -7,6 +7,7 @@ while [ $status -eq 0 ]; do
         -s 1,lpc \
         -s 2,virtio-blk,${_FREEBSD_VM_IMG} \
         -s 3,virtio-blk,${_FREEBSD_KERN_VM_IMG} \
+        -G 1234 \
         -l com1,stdio \
         -l bootrom,/usr/local/share/uefi-firmware/BHYVE_UEFI.fd \
         devvm
