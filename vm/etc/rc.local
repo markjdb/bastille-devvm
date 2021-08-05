@@ -1,4 +1,4 @@
-#mount /dev/vtbd1p1 /mnt
+#mount /dev/gpt/kernel /mnt
 #cp -R /mnt/boot/kernel /boot
 #umount /mnt
 #sysctl kern.bootfile=/boot/kernel/kernel
