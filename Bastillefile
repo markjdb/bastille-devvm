@@ -34,7 +34,7 @@ CMD mkdir -p ${_FREEBSD_BUILDROOT}/boot/efi/EFI/BOOT
 CMD cp ${_FREEBSD_BUILDROOT}/boot/loader.efi ${_FREEBSD_BUILDROOT}/boot/efi/EFI/BOOT/bootx64.efi
 CMD makefs -t msdos -o fat_type=16 -o sectors_per_cluster=1 -o volume_label=EFISYS -s 4096k /root/vm.efi ${_FREEBSD_BUILDROOT}/boot/efi
 
-CMD makefs -B little -M 50g -S 512 -Z -o label=VM -o softupdates=1 -o version=2 /root/vm.part ${_FREEBSD_BUILDROOT}
+CMD makefs -B little -M 50g -S 512 -Z -o label=VM -o softupdates=1 -o version=2 -o density=8192 /root/vm.part ${_FREEBSD_BUILDROOT}
 CMD makefs -B little -S 512 -Z -o label=kernel -o version=2 /root/vm_kern.part ${_FREEBSD_KERN_BUILDROOT}
 CMD mkimg -s gpt -f raw -S 512 -b ${_FREEBSD_BUILDROOT}/boot/pmbr -p freebsd-boot/bootfs:=${_FREEBSD_BUILDROOT}/boot/gptboot -p efi:=/root/vm.efi -p freebsd-swap/swap::8G -p freebsd-ufs/rootfs:=/root/vm.part -o ${_FREEBSD_VM_IMG}
 CMD mkimg -s gpt -f raw -S 512 -b ${_FREEBSD_BUILDROOT}/boot/pmbr -p freebsd-ufs/kernel:=/root/vm_kern.part -o ${_FREEBSD_KERN_VM_IMG} 
