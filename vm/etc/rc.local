@@ -1,5 +1,5 @@
-#mount /dev/gpt/kernel /mnt
-#cp -R /mnt/boot/kernel /boot
-#umount /mnt
-#sysctl kern.bootfile=/boot/kernel/kernel
-#sysctl kern.module_path=/boot/kernel
+mount /dev/gpt/kernel /mnt
+cp -R /mnt/boot/kernel /boot
+umount /mnt
+sysctl kern.bootfile=/boot/kernel/kernel
+sysctl kern.module_path=/boot/kernel
