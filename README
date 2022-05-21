@@ -19,7 +19,7 @@ into the image.
 
    The ruleset can be configured with:
 
-   # bastille config <jail name> set devfs_rule <ruleset number>
+   # bastille config <jail name> set devfs_ruleset <ruleset number>
    # bastille restart <jail name>
 
 2. build.sh builds a new kernel and installs it into a separate
