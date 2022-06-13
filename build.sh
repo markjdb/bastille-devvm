@@ -40,7 +40,7 @@ done
 
 cd ${_FREEBSD_SRC_PATH}
 make ${JFLAG} buildkernel -s $KERNFAST KERNCONF=$KERNCONF $MODULES
-make ${JFLAG} installkernel KERNCONF=$KERNCONF $MODULES DESTDIR=${_FREEBSD_KERN_BUILDROOT}
+make ${JFLAG} installkernel -s KERNCONF=$KERNCONF $MODULES DESTDIR=${_FREEBSD_KERN_BUILDROOT}
 
 makefs -B little -S 512 -Z -o label=kernel -o version=2 /root/vm_kern.part \
     ${_FREEBSD_KERN_BUILDROOT}
