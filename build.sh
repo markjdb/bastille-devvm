@@ -20,13 +20,16 @@ __EOF__
 KERNFAST=-DKERNFAST
 KERNCONF=GENERIC
 
-while getopts ac:j:m:t: o; do
+while getopts ac:d:j:m:t: o; do
     case "$o" in
     a)
         KERNFAST=
         ;;
     c)
         KERNCONF=$OPTARG
+        ;;
+    d)
+        SRCDIR=$OPTARG
         ;;
     m)
         MODULES="MODULES_OVERRIDE=${OPTARG}"
@@ -38,9 +41,8 @@ while getopts ac:j:m:t: o; do
     shift $((OPTIND - 1))
 done
 
-cd ${_FREEBSD_SRC_PATH}
-make ${JFLAG} buildkernel -s $KERNFAST KERNCONF=$KERNCONF $MODULES
-make ${JFLAG} installkernel -s KERNCONF=$KERNCONF $MODULES DESTDIR=${_FREEBSD_KERN_BUILDROOT}
+make -C ${_FREEBSD_SRC_PATH}/${SRCDIR} ${JFLAG} buildkernel -s $KERNFAST KERNCONF=$KERNCONF $MODULES
+make -C ${_FREEBSD_SRC_PATH}/${SRCDIR} ${JFLAG} installkernel -s KERNCONF=$KERNCONF $MODULES DESTDIR=${_FREEBSD_KERN_BUILDROOT}
 
 makefs -B little -S 512 -Z -o label=kernel -o version=2 /root/vm_kern.part \
     ${_FREEBSD_KERN_BUILDROOT}

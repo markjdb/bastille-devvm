@@ -7,10 +7,13 @@ usage()
 }
 
 KERNCONF=GENERIC
-while getopts c: o; do
+while getopts c:d: o; do
     case $o in
     c)
         KERNCONF=$OPTARG
+        ;;
+    d)
+        SRCDIR=$OPTARG
         ;;
     *)
         usage
@@ -31,7 +34,7 @@ while [ $status -eq 0 ]; do
         devvm
     status=$?
     if [ $status -eq 0 ]; then
-        sh build.sh -c $KERNCONF
+        sh build.sh -c $KERNCONF -d "$SRCDIR"
         if [ $? != 0 ]; then
             break
         fi
