@@ -1,2 +1,2 @@
-gpt/rootfs / ufs rw 0 0
-gpt/swap none swap sw 0 0 
+/dev/gpt/rootfs / ufs rw 0 0
+/dev/gpt/swap none swap sw 0 0 
