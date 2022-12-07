@@ -2,7 +2,7 @@ ARG JFLAG=-j4
 ARG TOOLCHAIN=llvm13
 ARG FREEBSD_HOST_SRC_PATH=/usr/src
 
-PKG ${TOOLCHAIN} bhyve-firmware
+PKG ${TOOLCHAIN} bhyve-firmware gdb
 
 ARG _FREEBSD_SRC_PATH=/root/freebsd
 ARG _FREEBSD_SRCCONF=/root/src.conf
@@ -22,6 +22,7 @@ CMD chmod u+x /root/run.sh
 CP build.sh /root/build.sh
 RENDER /root/build.sh
 CMD chmod u+x /root/build.sh
+CP gdbinit /root/.gdbinit
 
 CMD mkdir -p ${_FREEBSD_BUILDROOT}
 CMD make -s -C ${_FREEBSD_SRC_PATH} ${JFLAG} buildworld SRCCONF=${_FREEBSD_SRCCONF} CROSS_TOOLCHAIN=${TOOLCHAIN}
