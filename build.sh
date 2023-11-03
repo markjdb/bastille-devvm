@@ -34,6 +34,9 @@ while getopts ac:d:j:m:t: o; do
     m)
         MODULES="MODULES_OVERRIDE=${OPTARG}"
         ;;
+    t)
+        TOOLCHAIN="CROSS_TOOLCHAIN=${OPTARG}"
+        ;;
     *)
         usage
         ;;
@@ -41,7 +44,7 @@ while getopts ac:d:j:m:t: o; do
     shift $((OPTIND - 1))
 done
 
-make -C ${_FREEBSD_SRC_PATH}/${SRCDIR} ${JFLAG} buildkernel -s $KERNFAST KERNCONF=$KERNCONF $MODULES
+make -C ${_FREEBSD_SRC_PATH}/${SRCDIR} ${JFLAG} buildkernel -s $KERNFAST KERNCONF=$KERNCONF $MODULES $TOOLCHAIN
 make -C ${_FREEBSD_SRC_PATH}/${SRCDIR} ${JFLAG} installkernel -s KERNCONF=$KERNCONF $MODULES DESTDIR=${_FREEBSD_KERN_BUILDROOT}
 
 makefs -B little -S 512 -Z -o label=kernel -o version=2 /root/vm_kern.part \
